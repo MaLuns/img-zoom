@@ -4,6 +4,18 @@
   "bin": {
     "img-zoom": "bin/index.js"
   },
+  "version": "0.0.1",
+  "keywords": [
+    "image cropping",
+    "img compression"
+  ],
+  "repository": "git@github.com:MaLuns/img-zoom.git",
+  "author": "白云苍狗 <admin@imalun.com>",
+  "homepage": "https://github.com/MaLuns/img-zoom",
+  "bugs": {
+    "url": "https://github.com/MaLuns/img-zoom/issues"
+  },
+  "license": "MIT",
   "dependencies": {
     "@types/prompts": "^2.4.9",
     "chalk": "^4.1.2",
