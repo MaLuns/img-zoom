@@ -8,7 +8,7 @@ const prompts = require("prompts");
 const log4js = require("log4js");
 const homeDir = require("os").homedir();
 const desktopDir = `${homeDir}\\Desktop\\img_${Math.random().toString(36).slice(-6)}`;
-const ImgZip = require("./core/img-zoom");
+const ImgZoom = require("./core/img-zoom");
 
 let isCancel = false;
 prompts(
@@ -69,7 +69,18 @@ prompts(
     return;
   }
 
-  const imgZip = new ImgZip({
+  log4js.configure({
+    appenders: {
+      out: { type: "stdout" },
+      info: { type: "file", filename: path.join(imgZoom.outPutDir, "img.log") },
+    },
+    categories: {
+      default: { appenders: ["out"], level: "info" },
+      info: { appenders: ["info"], level: "info" },
+    },
+  });
+
+  const imgZoom = new ImgZoom({
     quality: res.quality,
     inputDir: res.inputDir?.trim(),
     outPutDir: res?.outPutDir?.trim() || desktopDir,
@@ -77,21 +88,8 @@ prompts(
     copyAllFile: res.copyAllFile,
   });
 
-  log4js.configure({
-    appenders: {
-      out: { type: "stdout" },
-      info: { type: "file", filename: path.join(imgZip.outPutDir, "imgzip.log") },
-      // error: { type: 'file', filename: path.join(imgZip.outPutDir, 'imgzip_error.log') }
-    },
-    categories: {
-      default: { appenders: ["out"], level: "info" },
-      info: { appenders: ["info"], level: "info" },
-      // error: { appenders: ['out', 'error'], level: 'error' }
-    },
-  });
-
   const log4 = log4js.getLogger("info");
 
   console.log("\n扫描压缩开始\n");
-  imgZip.start().catch((err) => log4.error(chalk.red(`处理过程中出现错误: ${err.message}`)));
+  imgZoom.start().catch((err) => log4.error(chalk.red(`处理过程中出现错误: ${err.message}`)));
 });

@@ -9,7 +9,7 @@ const log4 = log4js.getLogger('info');
 const MAX_SIZE = 500 * 1024
 const IMG_REG = /\.(png|jpg|jpeg|svg|bmp|webp)$/
 
-class ImgZip {
+class ImgZoom {
     /** 图片质量 */
     quality = 90
     /** 输入目录 */
@@ -42,7 +42,8 @@ class ImgZip {
         const stat = fs.statSync(inputDir)
         console.log(chalk.bgHex('#384399')(' 源目录 '), inputDir);
         console.log(chalk.bgHex('#384399')(' 新目录 '), outPutDir, '\n');
-
+        log4.info('源目录', inputDir)
+        log4.info('新目录', outPutDir)
         clearOutPutDir && fs.emptyDirSync(outPutDir)
 
         if (stat.isDirectory()) {
@@ -50,7 +51,7 @@ class ImgZip {
         } else if (stat.isFile() && IMG_REG.test(inputDir)) {
             await this.image(inputDir, inputDir.replace(/\\[^\\]*$/, ''), outPutDir, stat)
         } else {
-            console.log('文件信息获取失败');
+            log4.error('文件信息获取失败')
             return
         }
 
@@ -141,6 +142,7 @@ class ImgZip {
                 reject()
                 this.result.error++
                 this.zipErrImgs.push(input)
+                log4.error(input, error)
             }
         })
     }
@@ -158,6 +160,7 @@ class ImgZip {
         const size = formatSize(newSize)
         this.oldSize += oldSize
         this.newSize += newSize
+        log4.info(relativePath, formatSize(oldSize), '=>', size)
         console.log(
             //
             chalk.bgHex('#384399')('  INFO  '),
@@ -169,4 +172,4 @@ class ImgZip {
     }
 }
 
-module.exports = ImgZip;
+module.exports = ImgZoom;
