@@ -20,21 +20,22 @@ class ImgZoom {
     clearOutPutDir = false
     /** 复制目录中文件 */
     copyAllFile = false
+    /** 压缩尺寸调整 */
+    resize = { w: undefined, h: undefined }
     /** 处理结果 */
-    result = {
-        success: 0,
-        error: 0,
-        copy: 0
-    }
+    result = { success: 0, error: 0, copy: 0 }
     /** 失败图片信息 */
     zipErrImgs = []
 
-    constructor({ quality, inputDir, outPutDir, clearOutPutDir, copyAllFile }) {
+    constructor({ quality, inputDir, outPutDir, clearOutPutDir = false, copyAllFile = false, resize = '' }) {
+        const [w, h] = [...resize.matchAll(/[0-9]+/g)].map(item => Number(item[0]))
         this.quality = quality || this.quality
         this.inputDir = inputDir || this.inputDir
         this.outPutDir = outPutDir || this.outPutDir
         this.clearOutPutDir = Boolean(clearOutPutDir)
         this.copyAllFile = Boolean(copyAllFile)
+        this.resize.w = w || this.resize.w
+        this.resize.h = h || this.resize.h
     }
 
     async start() {
@@ -130,8 +131,8 @@ class ImgZoom {
             try {
                 const img = sharp(input)
                 const meta = await img.metadata()
-                // .resize({ width: 750 })
                 img
+                    .resize({ width: this.resize.w, height: this.resize.h })
                     .toFormat(meta.format, { quality: this.quality })
                     .toFile(output)
                     .then(() => {

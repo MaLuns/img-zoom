@@ -37,6 +37,11 @@ prompts(
       message: "请设置压缩质量",
     },
     {
+      type: "text",
+      name: "resize",
+      message: "压缩尺寸宽度设置",
+    },
+    {
       type: "select",
       name: "clearOutPutDir",
       message: (prev, values) => `是否清空目录 <${values.outPutDir ? values.outPutDir : desktopDir}> ?`,
@@ -69,6 +74,15 @@ prompts(
     return;
   }
 
+  const imgZoom = new ImgZoom({
+    quality: res.quality,
+    inputDir: res.inputDir?.trim(),
+    outPutDir: res?.outPutDir?.trim() || desktopDir,
+    resize: res.resize?.trim(),
+    clearOutPutDir: res.clearOutPutDir,
+    copyAllFile: res.copyAllFile,
+  });
+
   log4js.configure({
     appenders: {
       out: { type: "stdout" },
@@ -78,14 +92,6 @@ prompts(
       default: { appenders: ["out"], level: "info" },
       info: { appenders: ["info"], level: "info" },
     },
-  });
-
-  const imgZoom = new ImgZoom({
-    quality: res.quality,
-    inputDir: res.inputDir?.trim(),
-    outPutDir: res?.outPutDir?.trim() || desktopDir,
-    clearOutPutDir: res.clearOutPutDir,
-    copyAllFile: res.copyAllFile,
   });
 
   const log4 = log4js.getLogger("info");
